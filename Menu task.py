@@ -3,6 +3,8 @@ from tkinter import ttk
 from tkinter.messagebox import *
 from random import randint
 ask={}
+name=""
+score=0
 def update_stuff(ask):
     with open("q&a.txt","r",encoding="utf-8") as file:
         for line in file:
@@ -12,19 +14,32 @@ def update_stuff(ask):
     return ask
 def questions():
     ask_copy=list(ask)
-    print(ask_copy)
     btn_quiz.pack_forget()
     for i in labels:
         for j in entries:
             if labels.index(i)==entries.index(j):
-                k=randint(0,19)
-                i.configure(text=ask_copy[k])
-                ask_copy.pop(k)
+                if labels.index(i)==0 and entries.index(j)==0:
+                    i.configure(text="What is your name?")
+                else:
+                    k=randint(0,len(ask_copy)-1)
+                    i.configure(text=ask_copy[k])
+                    ask_copy.pop(k)
                 i.pack(fill="both")
                 j.pack()
-
-    btn_quiz.configure(text="Confirm answers")
+    btn_quiz.configure(text="Confirm answers",command=confirm)
     btn_quiz.pack()
+def confirm():
+    for i in entries:
+        value=i.get()
+        if len(value)==0:
+            showerror("Error",f"You didnt write anything in question #{entries.index(i)+1}")
+            break
+        else:
+            if entries.index(i)==0:
+                name=value
+            else:
+                if i.get().lower()==ask[labels[entries.index(i)].cget("text")]:#widgets=dict, text=key, cget just gets the value of the key
+                    score+=1
 def sort_correct(name,score):
     friend1=[]
     friend2=[]
@@ -61,7 +76,7 @@ def sort_failed(name,score):
 ask=update_stuff(ask)
 scr=Tk()
 scr.title("Quiz")
-scr.geometry("400x300")
+scr.geometry("1050x550")
 
 tabs=ttk.Notebook(scr)
 
