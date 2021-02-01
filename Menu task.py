@@ -1,27 +1,30 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import *
-import webbrowser
-from random import choice
+from random import randint
 ask={}
-def update_stuff():
+def update_stuff(ask):
     with open("q&a.txt","r",encoding="utf-8") as file:
         for line in file:
             friend=[i.strip("\n") for i in line.split(":")]
             ask[friend[0]]=friend[1]
             friend.clear()
+    return ask
 def questions():
+    ask_copy=list(ask)
+    print(ask_copy)
     btn_quiz.pack_forget()
     for i in labels:
         for j in entries:
             if labels.index(i)==entries.index(j):
-                if labels.index(i)==0 and entries.index(j)==0:
-                    i.configure(text="What is your name?")
-                k=choice(list(ask_copy))
-                i.configure(text=k)
+                k=randint(0,19)
+                i.configure(text=ask_copy[k])
+                ask_copy.pop(k)
                 i.pack(fill="both")
                 j.pack()
-    btn_quiz.configure()
+
+    btn_quiz.configure(text="Confirm answers")
+    btn_quiz.pack()
 def sort_correct(name,score):
     friend1=[]
     friend2=[]
@@ -55,16 +58,14 @@ def sort_failed(name,score):
         for i in range(len(help_)):
             f.write(help_[i]+"\n")
 
-ask=update_stuff()
+ask=update_stuff(ask)
 scr=Tk()
 scr.title("Quiz")
 scr.geometry("400x300")
-scr.title("Super Duper Menu Of Awesomeness")
 
 tabs=ttk.Notebook(scr)
 
-ask={}
-lbl1=Label(scr,font="Times_New_Roman 14")
+lbl1=Label(scr,text="What is your name",font="Times_New_Roman 14")
 lbl2=Label(scr,font="Times_New_Roman 14")
 lbl3=Label(scr,font="Times_New_Roman 14")
 lbl4=Label(scr,font="Times_New_Roman 14")
@@ -72,7 +73,7 @@ lbl5=Label(scr,font="Times_New_Roman 14")
 lbl6=Label(scr,font="Times_New_Roman 14")
 ent1=Entry(scr,font="Times_New_Roman 14")
 ent2=Entry(scr,font="Times_New_Roman 14")
-ent3=Entry(šcr,font="Times_New_Roman 14")
+ent3=Entry(scr,font="Times_New_Roman 14")
 ent4=Entry(scr,font="Times_New_Roman 14")
 ent5=Entry(scr,font="Times_New_Roman 14")
 ent6=Entry(scr,font="Times_New_Roman 14")
