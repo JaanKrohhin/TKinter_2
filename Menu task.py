@@ -1,10 +1,14 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter.messagebox import *
-from random import randint
+from tkinter import scrolledtext
+from random import randint,choice
 ask={}
 name=""
 score=0
+help=False
+colours=["cadetblue","crimson","orange","lightgray","forestgreen"]
+bg_=choice(colours)
 def update_stuff(ask):
     with open("q&a.txt","r",encoding="utf-8") as file:
         for line in file:
@@ -13,13 +17,14 @@ def update_stuff(ask):
             friend.clear()
     return ask
 def questions():
+    scr.geometry("1050x550")
     ask_copy=list(ask)
     btn_quiz.pack_forget()
     for i in labels:
         for j in entries:
             if labels.index(i)==entries.index(j):
                 if labels.index(i)==0 and entries.index(j)==0:
-                    i.configure(text="What is your name?")
+                    i.configure(text="What is your name?",font="Times_New_Roman 14")
                 else:
                     k=randint(0,len(ask_copy)-1)
                     i.configure(text=ask_copy[k])
@@ -29,106 +34,138 @@ def questions():
     btn_quiz.configure(text="Confirm answers",command=confirm)
     btn_quiz.pack()
 def confirm():
+    global help
     for i in entries:
         value=i.get()
         if len(value)==0:
             showerror("Error",f"You didnt write anything in question #{entries.index(i)+1}")
             break
         else:
+            global score,name
             if entries.index(i)==0:
                 name=value
+            elif entries.index(i)==5:
+                help=True
+                if i.get().lower()==ask[labels[entries.index(i)].cget("text")]:#widgets=dict, text=key, cget just gets the value of the key
+                    score+=1
             else:
                 if i.get().lower()==ask[labels[entries.index(i)].cget("text")]:#widgets=dict, text=key, cget just gets the value of the key
                     score+=1
-def sort_correct(name,score):
+    if help:
+        for j in labels,entries:
+            for k in j:
+                k.pack_forget()
+        btn_quiz.pack_forget()
+        lbl1.configure(text=f"Your score is {score} out of 5",font=f"Times_New_Roman 40")
+        btn_quiz.configure(text="End Quiz",command=sort_)
+        lbl1.pack()
+        btn_quiz.pack()
+def sort_():
+    global name
+    print(name)
     friend1=[]
     friend2=[]
     friend1.append(name)
     friend2.append(str(score))
-    with open("passed.txt","r",encoding="utf-8") as f:
-        for line in f:
-            o=line.split(":")
-            friend1.append(o[0])
-            friend2.append(o[1].strip("\n"))
-    for k in range(0,len(friend1)):
-        for j in range(0,len(friend1)):
-            if int(friend2[k])>int(friend2[j]):
-                help_=friend2[k]
-                friend2[k]=friend2[j]
-                friend2[j]=help_
+    if score>=3:
+        with open("passed.txt","r",encoding="utf-8") as f:
+            for i in f:
+                o=i.split(":")
+                friend1.append(o[0])
+                friend2.append(o[1].strip("\n"))
+        for k in range(0,len(friend1)):
+            print(friend1,friend2,friend2[k],int(friend2[k]),sep="\n")
+            for j in range(0,len(friend1)):
+                if int(friend2[k])>int(friend2[j]):
+                    help_=friend2[k]
+                    friend2[k]=friend2[j]
+                    friend2[j]=help_
                 
-                help_=friend1[k]
-                friend1[k]=friend1[j]
-                friend1[j]=help_
-    with open("passed.txt","w",encoding="utf-8") as f:
-        for i in range(len(friend1)):
-            f.write(friend1[i]+":"+friend2[i]+"\n")
-def sort_failed(name,score):
-    with open("failed.txt","r",encoding="utf-8") as f:
-        help_=[f"{name}:{str(score)}"]
-        for line in f:
-            help_.append(line.strip("\n"))
-    help_.sort()
-    with open("failed.txt","w",encoding="utf-8") as f:
-        for i in range(len(help_)):
-            f.write(help_[i]+"\n")
+                    help_=friend1[k]
+                    friend1[k]=friend1[j]
+                    friend1[j]=help_
+        with open("passed.txt","w",encoding="utf-8") as f:
+            for i in range(len(friend1)):
+                f.write(friend1[i]+":"+friend2[i]+"\n")
 
+    else:
+        with open("failed.txt","r",encoding="utf-8") as f:
+            friend=[f"{name}:{str(score)}"]
+            for line in f:
+                friend.append(line.strip("\n"))
+        friend.sort()
+        with open("failed.txt","w",encoding="utf-8") as f:
+            for i in range(len(friend)):
+                f.write(friend[i]+"\n")
+    lbl1.pack_forget()
+    btn_quiz.configure(text="Start Quiz",command=questions)
+    btn_quiz.pack(fill="both")
+    scr.geometry("400x400")
+def passed():
+    help_=""
+    global txt
+    txt.delete(0.0,END)
+    with open("passed.txt","r",encoding="utf-8") as f:
+        for i in f:
+            help_+=i.strip("(){}")
+        help_=help_.replace(":"," ")
+        txt.insert(0.0,help_)
+def failed():
+    help_=""
+    txt.delete(0.0,END)
+    with open("failed.txt","r",encoding="utf-8") as f:
+        for i in f:
+            help_+=i.strip("(){}")
+        help_=help_.replace(":"," ")
+        txt.insert(0.0,help_)
+def admin():
+    root=Tk()
+    root.title("Admin")
+    root.geometry("200x300")
+    tabs=ttk.Notebook(scr)
+
+    tab1=Frame(tabs)
+    tabs.add(tab1,text="Lists")
+    btn_passed=Button(tab1,text="Passed list",command=passed,width=27)
+    btn_failed=Button(tab1,text="Failed list",command=failed,width=27)
+    tab1.pack(fill="both")
+    btn_passed.pack()
+    btn_failed.pack()
+    txt.pack()
+
+    tab2=Frame(tabs)
+    tabs.add(tab2,text="Add Question")
+    ent1_a=Entry(tab2,width=27)
+    entry2_a=Entry(tab2,width=27)
+    ent1_a.grid(row=0,column=0)
+
+
+    root.mainloop()
 ask=update_stuff(ask)
 scr=Tk()
+scr.configure(bg=bg_)
 scr.title("Quiz")
-scr.geometry("1050x550")
-
+scr.geometry("450x350")
 tabs=ttk.Notebook(scr)
-
-lbl1=Label(scr,text="What is your name",font="Times_New_Roman 14")
-lbl2=Label(scr,font="Times_New_Roman 14")
-lbl3=Label(scr,font="Times_New_Roman 14")
-lbl4=Label(scr,font="Times_New_Roman 14")
-lbl5=Label(scr,font="Times_New_Roman 14")
-lbl6=Label(scr,font="Times_New_Roman 14")
-ent1=Entry(scr,font="Times_New_Roman 14")
-ent2=Entry(scr,font="Times_New_Roman 14")
-ent3=Entry(scr,font="Times_New_Roman 14")
-ent4=Entry(scr,font="Times_New_Roman 14")
-ent5=Entry(scr,font="Times_New_Roman 14")
-ent6=Entry(scr,font="Times_New_Roman 14")
+lbl1=Label(scr,text="What is your name",font="Times_New_Roman 14",bg=bg_)
+lbl2=Label(scr,font="Times_New_Roman 14",bg=bg_)
+lbl3=Label(scr,font="Times_New_Roman 14",bg=bg_)
+lbl4=Label(scr,font="Times_New_Roman 14",bg=bg_)
+lbl5=Label(scr,font="Times_New_Roman 14",bg=bg_)
+lbl6=Label(scr,font="Times_New_Roman 14",bg=bg_)
+ent1=Entry(scr,font="Times_New_Roman 14",bg=bg_)
+ent2=Entry(scr,font="Times_New_Roman 14",bg=bg_)
+ent3=Entry(scr,font="Times_New_Roman 14",bg=bg_)
+ent4=Entry(scr,font="Times_New_Roman 14",bg=bg_)
+ent5=Entry(scr,font="Times_New_Roman 14",bg=bg_)
+ent6=Entry(scr,font="Times_New_Roman 14",bg=bg_)
 labels=[lbl1,lbl2,lbl3,lbl4,lbl5,lbl6]
 entries=[ent1,ent2,ent3,ent4,ent5,ent6]
 
-btn_quiz=Button(scr,text="Start Quiz",font="Times_New_Roman 14",command=questions)
+btn_quiz=Button(scr,text="Start Quiz",font="Times_New_Roman 14",bg=bg_,command=questions)
 btn_quiz.pack(fill="both")
-
-scr.mainloop()
-
-
-
-#name=input("\nWhat is your name ,friendo?\n=>")
-#c=0
-#score=0
-#print(f"{name}, that's a lovely name!")
-#print(f"\nLet us start our quiz {name}!")
-#c,ask_copy=question(ask_copy,name)
-#score
-#print(f"\nYour score is {score}/5")
-#if score>=3:
-#    print(f"You passed! Congratulations {name}!")
-#    sort_correct(name,score)
-#else:
-#    print(f"Sorry to say it {name}, but you have failed the quiz. Better luck next time!")
-#    sort_failed(name,score)
-#M=Menu(scr)
-#scr.config(menu=M)
-#m1=Menu(M,tearoff=1)
-#M.add_cascade(label="BG Colours",menu=m1)
-#m1.add_command(label="Yellow",command=lambda:scr.config(bg="Yellow"))
-#m1.add_command(label="Purple",command=lambda:scr.config(bg="Purple"))
-#m1.add_command(label="Blue",command=lambda:scr.config(bg="CadetBlue"))
-#m2=Menu(M,tearoff=2)
-#M.add_cascade(label="Button")
-#m2.add_command(label="Create")
-#m2.add_command(label="Random name")
-#m2.add_command(label="Random letter size")
-#m2.add_command(label="Random Background")
-#m2.add_command(label="Delete")
-#txt_box=Text(tab1,height=5,width=40)
-#txt_box.grid(row=0,column=0,columnspan=3)
+m=Menu(scr)
+scr.config(menu=m)
+m1=Menu(m,tearoff=1)
+m.add_cascade(label="File",menu=m1)
+m1.add_command(label="Admin Menu",command=admin)

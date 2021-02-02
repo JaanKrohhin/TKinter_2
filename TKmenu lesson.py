@@ -36,7 +36,7 @@ scr=Tk()
 scr.geometry("400x300")
 scr.title("TKinter elements")
 tabs=ttk.Notebook(scr)
-list_=["First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eight"]
+#list_=["First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eight"]
 tab1=Frame(tabs)
 tab2=Frame(tabs)
 tab3=Frame(tabs)
