@@ -20,6 +20,8 @@ def questions():
     scr.geometry("1050x550")
     ask_copy=list(ask)
     btn_quiz.pack_forget()
+    for o in entries:
+        o.delete(0,END)
     for i in labels:
         for j in entries:
             if labels.index(i)==entries.index(j):
@@ -62,7 +64,6 @@ def confirm():
         btn_quiz.pack()
 def sort_():
     global name
-    print(name)
     friend1=[]
     friend2=[]
     friend1.append(name)
@@ -111,6 +112,7 @@ def passed():
         help_=help_.replace(":"," ")
         txt.insert(0.0,help_)
 def failed():
+    global txt
     help_=""
     txt.delete(0.0,END)
     with open("failed.txt","r",encoding="utf-8") as f:
@@ -121,26 +123,35 @@ def failed():
 def admin():
     root=Tk()
     root.title("Admin")
+    root.configure(bg=bg_)
     root.geometry("200x300")
-    tabs=ttk.Notebook(scr)
+    tabs=ttk.Notebook(root)
 
     tab1=Frame(tabs)
     tabs.add(tab1,text="Lists")
+    global txt
+    txt=scrolledtext.ScrolledText(tab1,height=15,width=30)
     btn_passed=Button(tab1,text="Passed list",command=passed,width=27)
     btn_failed=Button(tab1,text="Failed list",command=failed,width=27)
-    tab1.pack(fill="both")
     btn_passed.pack()
     btn_failed.pack()
     txt.pack()
 
     tab2=Frame(tabs)
     tabs.add(tab2,text="Add Question")
-    ent1_a=Entry(tab2,width=27)
-    entry2_a=Entry(tab2,width=27)
-    ent1_a.grid(row=0,column=0)
+    txt1_a=scrolledtext.ScrolledText(tab2,height=2,width=25)
+    txt2_a=scrolledtext.ScrolledText(tab2,height=2,width=25)
+    lbl1_a=Label(tab2,text="Question",width=10)
+    lbl2_a=Label(tab2,text="Answer",width=10)
+    btn_a=Button(tab2,text="Add",width=10)
+    lbl1_a.grid(row=0,column=1,columnspan=2)
+    txt1_a.grid(row=1,column=0,columnspan=4)
+    lbl2_a.grid(row=2,column=1,columnspan=2)
+    txt2_a.grid(row=3,column=0,columnspan=4)
 
-
+    tabs.pack(fill="both")
     root.mainloop()
+
 ask=update_stuff(ask)
 scr=Tk()
 scr.configure(bg=bg_)
@@ -169,3 +180,4 @@ scr.config(menu=m)
 m1=Menu(m,tearoff=1)
 m.add_cascade(label="File",menu=m1)
 m1.add_command(label="Admin Menu",command=admin)
+scr.mainloop()
