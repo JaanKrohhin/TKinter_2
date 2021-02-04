@@ -18,3 +18,4 @@ What does Pokemon TCG stand for?:trading card game
 What pokemon can speak in human language fluently and is a member of Team Rocket:meowth
 What is the name of the main character of the anime series from Pokemon?:ash
 What is the canon name of the main character in the original Pokemon game?:red
+a:b

@@ -222,25 +222,28 @@ def admin():
     btn_passed=Button(tab1,text="Passed list",command=passed,width=27,bg=bg_)
     btn_failed=Button(tab1,text="Failed list",command=failed,width=27,bg=bg_)
     btn_questions=Button(tab1,text="Questions list",command=quest,width=27,bg=bg_)
+
     btn_passed.pack(fill="both")
     btn_failed.pack(fill="both")
     btn_questions.pack(fill="both")
     txt.pack(fill="both")
     #Tab2-----------------------------------------------
-    global txt1_a,txt2_a
+    global txt1_a,txt2_a,btn1_a,btn_a,tab2
     tab2=Frame(tabs)
     tabs.add(tab2,text="Add Question")
     lbl1_a=Label(tab2,text="Question",width=10,bg=bg_)
     txt1_a=scrolledtext.ScrolledText(tab2,height=5,font="Times_New_Roman 14",width=25,bg=bg_)
-    txt2_a=Entry(tab2,font="Times_New_Roman 14",bg=bg_)
+    txt2_a=scrolledtext.ScrolledText(tab2,height=1,font="Times_New_Roman 14",width=25,bg=bg_)
     lbl2_a=Label(tab2,text="Answer",width=10,bg=bg_)
     btn_a=Button(tab2,text="Add",width=10,command=addd,bg=bg_)
+    #btn1_a=Button(tab2,text="Edit Existing Questions",width=10,command=edit,bg=bg_)
 
-    lbl1_a.pack(anchor=W,fill="both")
-    txt1_a.pack(anchor=W,fill="both")
-    lbl2_a.pack(anchor=W,fill="both")
-    txt2_a.pack(anchor=W,fill="both")
-    btn_a.pack(anchor=W,fill="both")
+    lbl1_a.grid(column=1,columnspan=2)
+    txt1_a.grid(row=1,columnspan=4)
+    lbl2_a.grid(column=1,row=2,columnspan=2)
+    txt2_a.grid(row=3,columnspan=4)
+    btn_a.grid(column=1,row=4,columnspan=2)
+    #btn1_a.grid(row=5,column=1,columnspan=2)
     tabs.pack(fill="both")
     root.mainloop()
 def passed():
@@ -282,6 +285,34 @@ def addd():
     txt1_a.delete(0.0,END)
     txt2_a.delete(0,END)
     ask=update_stuff(ask)
+#def edit():
+#    global txt1_a,txt2_a,ask,btn1_a,btn_a,tab2
+#    txt1_a.configure(width=50)
+#    txt2_a.configure(width=50)
+#    btn1_a.grid_forget()
+#    q=""
+#    a=""
+#    for i in ask:
+#        q+=i+"\n"
+#        a=ask[i]+","
+#    txt1_a.delete(0.0,END)
+#    txt2_a.delete(0.0,END)
+#    txt1_a.insert(0.0,q)
+#    txt2_a.insert(0.0,a)
+#    btn_a.configure(text="Confirm",command=save_)
+#def save_():
+#    btn1_a.grid(row=5,column=1,columnspan=2)
+#    btn_a.configure(text="Add",command=addd)
+#    q=txt1_a.get(0.0,END)
+#    q.split("\n")
+#    a=txt2_a.get(0.0,END)
+#    a=a.split(",")
+#    with open("q&a.txt","w",encoding="utf-8") as f:
+#        f.write(f"{q}:{a}")
+#    txt1_a.delete(0.0,END)
+#    txt2_a.delete(0.0,END)
+#    txt1_a.configure(width=25)
+#    txt2_a.configure(width=25)
 #Miscellaneous
 def change_to_1(event):
     if lbl2.winfo_ismapped()==0:
