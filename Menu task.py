@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from math import sqrt
-import os
 
 colours=["BlueViolet","Brown","CadetBlue","Crimson","ForestGreen","Gold","Sienna","Violet","RoyalBlue","LightGray"]
 rng=choice(colours)
@@ -16,6 +15,7 @@ name=""
 score=0
 help=False
 bg_=choice(colours)
+#square equation functions-------------------------------------------
 def roots(a,b,c):
     D=b**2-4*a*c
     with open("variables.txt","w") as file:
@@ -86,7 +86,7 @@ def graph(event):
     plt.grid(True)
     plt.plot(x,y,color=f"{rng}",lw=3)
     plt.show()
-
+#Quiz functions------------------------------------------------------
 def update_stuff(ask):
     with open("q&a.txt","r",encoding="utf-8") as file:
         for line in file:
@@ -180,35 +180,36 @@ def sort_():
     btn_quiz.configure(text="Start Quiz",command=questions)
     btn_quiz.pack(fill="both")
     scr.geometry("400x180")
-def passed():
-    help_=""
-    global txt
-    txt.delete(0.0,END)
-    with open("passed.txt","r",encoding="utf-8") as f:
-        for i in f:
-            help_+=i.strip("(){}")
-        help_=help_.replace(":"," ")
-        txt.insert(0.0,help_)
-def failed():
-    global txt
-    help_=""
-    txt.delete(0.0,END)
-    with open("failed.txt","r",encoding="utf-8") as f:
-        for i in f:
-            help_+=i.strip("(){}")
-        help_=help_.replace(":"," ")
-        txt.insert(0.0,help_)
-def addd():
-    global txt1_a,txt2_a
-    q=txt1_a.get(0.0,END)
-    q=q.strip("\n")
-    a=txt2_a.get()
-    with open("q&a.txt","a",encoding="utf-8") as f:
-        f.write(f"{q}:{a}")
-    txt1_a.delete(0.0,END)
-    txt2_a.delete(0,END)
+#Password menu functions
+def password():
+    global psw
+    psw=Tk()
+    psw.configure(bg=bg_)
+    psw.iconbitmap("Logo.ico")
+    psw.title("Password")
+    lbl_psw=Label(psw,text="The password is 'Key' in binary. Have fun!",font="Times_New_Roman 14",bg=bg_)
+    global ent_psw
+    ent_psw=Entry(psw,width=26,font="Times_New_Roman 14",bg=bg_)
+    btn_psw=Button(psw,font="Times_New_Roman 14",bg=bg_,text="Confirm",command=check_psw)
+    lbl_psw.grid(row=0)
+    ent_psw.grid(row=1)
+    btn_psw.grid(row=2)
+    psw.mainloop()
+def check_psw():
+    if ent_psw.get()=="010010110110010101111001":
+        psw.destroy()
+        admin()
+    elif ent_psw.get()=="Key":
+        psw.destroy()
+        admin()
+    else:
+        showinfo("Incorrect","C'mon, I told you the password......")
+#Admin menu functions
 def admin():
+    global root
     root=Tk()
+    root.iconbitmap("Logo.ico")
+
     root.title("Admin")
     root.configure(bg=bg_)
     root.geometry("250x300")
@@ -217,29 +218,71 @@ def admin():
     tab1=Frame(tabs)
     tabs.add(tab1,text="Lists")
     global txt
-    txt=scrolledtext.ScrolledText(tab1,height=15,width=30)
+    txt=scrolledtext.ScrolledText(tab1,height=15)
     btn_passed=Button(tab1,text="Passed list",command=passed,width=27,bg=bg_)
     btn_failed=Button(tab1,text="Failed list",command=failed,width=27,bg=bg_)
-    btn_passed.pack()
-    btn_failed.pack()
-    txt.pack()
-
+    btn_questions=Button(tab1,text="Questions list",command=quest,width=27,bg=bg_)
+    btn_passed.pack(fill="both")
+    btn_failed.pack(fill="both")
+    btn_questions.pack(fill="both")
+    txt.pack(fill="both")
+    #Tab2-----------------------------------------------
     global txt1_a,txt2_a
     tab2=Frame(tabs)
     tabs.add(tab2,text="Add Question")
-    lbl1_a=Label(tab2,text="Question",width=10)
+    lbl1_a=Label(tab2,text="Question",width=10,bg=bg_)
     txt1_a=scrolledtext.ScrolledText(tab2,height=5,font="Times_New_Roman 14",width=25,bg=bg_)
     txt2_a=Entry(tab2,font="Times_New_Roman 14",bg=bg_)
-    lbl2_a=Label(tab2,text="Answer",width=10)
-    btn_a=Button(tab2,text="Add",width=10,command=addd)
+    lbl2_a=Label(tab2,text="Answer",width=10,bg=bg_)
+    btn_a=Button(tab2,text="Add",width=10,command=addd,bg=bg_)
 
-    lbl1_a.grid(row=0,column=1,columnspan=2)
-    txt1_a.grid(row=1,column=0,columnspan=4)
-    lbl2_a.grid(row=2,column=1,columnspan=2)
-    txt2_a.grid(row=3,column=0,columnspan=4)
-    btn_a.grid(row=4,column=1,columnspan=2)
+    lbl1_a.pack(anchor=W,fill="both")
+    txt1_a.pack(anchor=W,fill="both")
+    lbl2_a.pack(anchor=W,fill="both")
+    txt2_a.pack(anchor=W,fill="both")
+    btn_a.pack(anchor=W,fill="both")
     tabs.pack(fill="both")
     root.mainloop()
+def passed():
+    global txt,root
+    help_=""
+    root.geometry("250x300")
+    txt.delete(0.0,END)
+    with open("passed.txt","r",encoding="utf-8") as f:
+        for i in f:
+            help_+=i.strip("(){}")
+        help_=help_.replace(":"," ")
+        txt.insert(0.0,help_)
+def failed():
+    global txt,root
+    help_=""
+    root.geometry("250x300")
+    txt.delete(0.0,END)
+    with open("failed.txt","r",encoding="utf-8") as f:
+        for i in f:
+            help_+=i.strip("(){}")
+        help_=help_.replace(":"," ")
+        txt.insert(0.0,help_)
+def quest():
+    global txt,ask,root
+    ask=update_stuff(ask)
+    txt.delete(0.0,END)
+    help_=""
+    root.geometry("800x300")
+    for i in ask:
+        help_+=i+"\n"
+    txt.insert(0.0,help_)
+def addd():
+    global txt1_a,txt2_a,ask
+    q=txt1_a.get(0.0,END)
+    q=q.strip("\n")
+    a=txt2_a.get()
+    with open("q&a.txt","a",encoding="utf-8") as f:
+        f.write(f"{q}:{a}\n")
+    txt1_a.delete(0.0,END)
+    txt2_a.delete(0,END)
+    ask=update_stuff(ask)
+#Miscellaneous
 def change_to_1(event):
     if lbl2.winfo_ismapped()==0:
         scr.geometry("400x180")
@@ -254,6 +297,7 @@ scr=Tk()
 scr.configure(bg=bg_)
 scr.title("The Super Duper Menu")
 scr.geometry("400x180")
+scr.iconbitmap("Logo.ico")
 tab=ttk.Notebook(scr)
 tab1_m=Frame(tab)
 tab.add(tab1_m,text="Pokemon Quiz")
@@ -283,9 +327,9 @@ m=Menu(scr)
 scr.config(menu=m)
 m1=Menu(m,tearoff=1)
 m.add_cascade(label="Settings",menu=m1)
-m1.add_command(label="Admin Menu",command=admin)
+m1.add_command(label="Admin Menu",command=password)
 #--------------------------------------------------------------------------------------
-#Second tab that is about square equations
+#Second tab that is about square equations(copied from last task with the screen changed to a tab)
 colours=["BlueViolet","Brown","CadetBlue","Crimson","ForestGreen","Gold","Sienna","Violet","Black","RoyalBlue"]
 rng=choice(colours)
 enta=Entry(tab2_m,width=15,fg="Orange",font="Ariel 14",bd=5)
@@ -296,14 +340,15 @@ btn=Button(tab2_m,width=20,text="Solve",font="Ariel 14",bd=5)
 btn1=Button(tab2_m,width=20,text="Graph",font="Ariel 14",bd=5)
 
 lbl=Label(tab2_m,width=34,height=7,bg="LightGray",fg="Orange",bd=5,anchor=NW,text="The solution will be posted here",font="Ariel 14",justify=CENTER)
-lbl
 lbla=Label(tab2_m,width=5,bg="LightGray",fg="Orange",bd=5,anchor=NW,text="a=",font="Ariel 14",justify=CENTER)
 lblb=Label(tab2_m,width=5,bg="LightGray",fg="Orange",bd=5,anchor=NW,text="b=",font="Ariel 14",justify=CENTER)
 lblc=Label(tab2_m,width=5,bg="LightGray",fg="Orange",bd=5,anchor=NW,text="c=",font="Ariel 14",justify=CENTER)
+
 btn1.bind("<Button-1>",graph)
 btn.bind("<Button-1>",solve)
 for meh in lbl,lbla,lblb,lblc:
     meh.bind("<Button-1>",change_to_2)
+
 enta.grid(column=1,row=0)
 entb.grid(column=1,row=1)
 entc.grid(column=1,row=2)
